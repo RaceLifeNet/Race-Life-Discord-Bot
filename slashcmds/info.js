@@ -77,7 +77,7 @@ try {
         },
         {
           name: "Commands Ran",
-          value: `${commandsran}`,
+          value: `${commandsraan}`,
           inline: true
         },
         {
@@ -98,8 +98,15 @@ try {
     } catch (err) {
       interaction.reply({
         embeds: [{
-          description: `Something went very wrong. Send this error to xWass#5848! \n\`\`\`${err}\`\`\``
-        }],
+         author: {
+        name: `Ostroid`,
+        icon_url: `https://endpoint.api.ostroidbot.ml/icon.png`,
+        url: `https://ostroidbot.ml`
+      },
+      title: `It's not you, it's us.`,
+      description: `We apoligise, Ostroid ran into a fatal error. Please send this error message to <@!655067326227546161>. \n\`\`\`${err}\`\`\``,
+          color: '#8C52FF'
+                    }],
         ephemeral: true
       });
     }
