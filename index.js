@@ -32,7 +32,6 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { readdirSync } = require("node:fs");
 const { join, resolve } = require("node:path");
-const users = client.users.cache.filter(user => !user.bot);
 
 /**********************************************************************/
 // Event Handler
@@ -61,7 +60,6 @@ const rest = new REST({ version: "9" }).setToken(process.env.TOKEN);
 (async () => {
   try {
     console.log(`${chalk.yellowBright('[WAIT] Refreshing Slash Commands')}`);
-
     await rest.put(Routes.applicationCommands(process.env.clientid), {
       body: client.SlashCommands.map((s) => s.data.toJSON()),
     });
@@ -104,34 +102,34 @@ client.on('interactionCreate', async (interaction) => {
 // Start API
 
 client.on("ready", () => {
+  client.user.setActivity(`over ${client.guilds.cache.size} guilds.`, { type: "WATCHING" })
+  let totalUsers = 0;
+
+  client.guilds.cache.forEach(guild => {
+    totalUsers += guild.memberCount;
+  });
   setInterval(function() {
-    client.user.setActivity(`over ${client.guilds.cache.size} guilds.`, { type: "WATCHING" })
+
   }, 50000);
 
   var http = require('http');
-  fs.readFile('./assets/count.txt', 'utf-8', (err, data) => {
-    if (err) throw err;
-    commandsran = data;
-    const json = {
-      "guilds": `${client.guilds.cache.size}`,
-      "members": `${users.size}`,
-      "commandsran": `${commandsran}`,
-      "commandcount": `1`
-    }
+  const json = {
+    "guilds": `${client.guilds.cache.size}`,
+    "members": `${totalUsers}`
+  }
 
-    var server = http.createServer((req, res) => {
-      if (req.url === '/icon.png') {
-        const img = fs.readFileSync('./assets/logo.png');
-        res.writeHead(200, { 'Content-Type': 'image/png' });
-        res.end(img, 'binary');
-      } else {
-        res.setHeader("Content-Type", "application/json");
-        res.writeHead(200);
-        res.end(JSON.stringify(json, null, 3));
-      }
-    });
-    server.listen(80);
+  var server = http.createServer((req, res) => {
+    if (req.url === '/icon.png') {
+      const img = fs.readFileSync('./assets/logo.png');
+      res.writeHead(200, { 'Content-Type': 'image/png' });
+      res.end(img, 'binary');
+    } else {
+      res.setHeader("Content-Type", "application/json");
+      res.writeHead(200);
+      res.end(JSON.stringify(json, null, 3));
+    }
   });
+  server.listen(80);
 });
 
 
